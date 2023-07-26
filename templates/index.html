@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Detector CII.IA</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            background-color: #000000;
+            color: #FFFFFF;
+            font-family: Arial, sans-serif;
+            padding-top: 20px;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .custom-header {
+            background-color: #303030;
+            color: #FFFFFF;
+            padding: 20px;
+            text-align: center;
+            font-size: 36px;
+            font-weight: bold;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .custom-form {
+            text-align: center;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 2px dashed #303030;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .custom-form input[type="file"] {
+            display: none;
+        }
+
+        .custom-form label {
+            background-color: #303030;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .custom-form label:hover {
+            background-color: #404040;
+        }
+
+        .custom-form #imageName {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .image-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            max-height: 500px;
+            margin: 20px auto;
+            display: block;
+        }
+
+        .btn {
+            background-color: #4CAF50;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        .loader {
+            border: 6px solid #f3f3f3;
+            border-top: 6px solid #4CAF50;
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+            display: none;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Estilo para el nombre de la imagen */
+        .image-name {
+            color: #FFFFFF;
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            text-align: center;
+            font-family: 'Arial', sans-serif; /* O utiliza otra tipografía bonita */
+        }
+
+        /* Estilo para el botón "Initialize Counting" */
+        .btn {
+            background-color: #4CAF50;
+            color: #FFFFFF;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .btn:hover {
+            background-color: #45a049;
+        }
+
+        /* Additional CSS for responsive layout */
+        @media screen and (min-width: 768px) {
+            .container {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+            }
+            .image-container {
+                flex-direction: row;
+            }
+            .image-container img {
+                margin: 20px;
+            }
+            .num-detections {
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+                margin-bottom: 10px;
+                background-color: #4CAF50;
+                padding: 10px;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            }
+            .image-title {
+                text-align: center;
+                font-size: 35px;
+                margin: 10px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="custom-header">
+        Screw Counter CII.IA
+    </div>
+
+    <div class="container">
+        <form action="/" method="post" enctype="multipart/form-data" onsubmit="showLoader()">
+            <div class="custom-form">
+                <label for="uploadFile">Load Image</label>
+                <input type="file" name="archivo" accept="image/*" id="uploadFile">
+                <div class="image-name" id="imageName"></div>
+                <input type="submit" value="Initialize Counting" class="btn btn-primary">
+            </div>
+            <div class="loader" id="loader"></div>
+        </form>
+
+        {% if original_img and processed_img %}
+        <div class="num-detections">
+            Number of screws: {{ num_detections }}
+        </div>
+
+        <div class="image-container">
+            <div class="image-item">
+                <h2 class="image-title">Input Image:</h2>
+                <img src="{{ original_img }}" alt="Imagen Original">
+            </div>
+            <div class="image-item">
+                <h2 class="image-title">Output Image:</h2>
+                <img src="{{ processed_img }}" alt="Imagen Procesada">
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    <script>
+        function showLoader() {
+            document.getElementById("loader").style.display = "block";
+        }
+
+        document.getElementById("uploadFile").addEventListener("change", function() {
+            var fileInput = this;
+            var fileName = fileInput.value.split('\\').pop();
+            document.getElementById("imageName").innerText = "Image Name: " + fileName;
+        });
+    </script>
+</body>
+</html>
